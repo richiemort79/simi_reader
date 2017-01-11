@@ -4,6 +4,9 @@
 
 //From the Simi manual:
 
+//Explanation of the header contibuted by Bruno Vellutini
+//https://github.com/nelas/simi.py
+
 //3.1 .sbd and .sbc
 //A SIMI°BioCell project consists of two files. All created data of a project are
 //stored in a text file .sbd. The .sbc file contains information of the
