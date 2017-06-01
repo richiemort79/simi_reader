@@ -74,6 +74,7 @@ macro "Read Simi Batch Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1c
 
 ///////////////////////////////////////////////////////////////////Functions here///////////////////////////////////////////////////////////////////////////
 
+//count the files in the directory and subdirectorys
 function countFiles(dir) {
 	list = getFileList(dir);
   	for (i=0; i<list.length; i++) {
@@ -84,6 +85,7 @@ function countFiles(dir) {
 	}
 }
 
+//iterate through and process the files in the directories
 function processFiles(dir) {
 	list = getFileList(dir);
 	for (i=0; i<list.length; i++) {
@@ -97,7 +99,7 @@ function processFiles(dir) {
 	}
 }
 
-
+//process the individual files
 function process(pathfile) {
 
 if (endsWith(pathfile, ".sbd")) {
