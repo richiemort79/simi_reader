@@ -58,7 +58,6 @@ macro "Read Simi Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1cD1eD1f
 {
 	
 	pathfile=File.openDialog("Choose the file to Open:");
-
 	process(pathfile);
 }
 
@@ -76,29 +75,27 @@ macro "Read Simi Batch Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1c
 ///////////////////////////////////////////////////////////////////Functions here///////////////////////////////////////////////////////////////////////////
 
 function countFiles(dir) {
-      list = getFileList(dir);
-      for (i=0; i<list.length; i++) {
-          if (endsWith(list[i], "/"))
-              countFiles(""+dir+list[i]);
-          else
-              count++;
-      }
-  }
-
-
+	list = getFileList(dir);
+  	for (i=0; i<list.length; i++) {
+    	if (endsWith(list[i], "/"))
+        	countFiles(""+dir+list[i]);
+     	else
+            count++;
+	}
+}
 
 function processFiles(dir) {
-      list = getFileList(dir);
-      for (i=0; i<list.length; i++) {
-          if (endsWith(list[i], "/"))
-              processFiles(""+dir+list[i]);
-          else {
-             showProgress(n++, count);
-             pathfile = dir+list[i];
-             process(pathfile);
-          }
-      }
-  }
+	list = getFileList(dir);
+	for (i=0; i<list.length; i++) {
+		if (endsWith(list[i], "/"))
+        	processFiles(""+dir+list[i]);
+		else {
+        	showProgress(n++, count);
+           	pathfile = dir+list[i];
+            process(pathfile);
+		}
+	}
+}
 
 
 function process(pathfile) {
