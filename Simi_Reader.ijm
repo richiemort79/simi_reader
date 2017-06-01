@@ -54,6 +54,17 @@
 //each cell entry is seperated by "---"
 //read the .txt file a line at a time
 
+//Template variables for plotting the trees
+
+//the x positions of the nodes in the tree are fixed to a corresponding node (let a or 1 = left and p 04 " = right in the names)
+var x_index = newArray(10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,550,560,570,580,590,600,610,620);
+var	nodes_2 = newArray("aaaaa","aaaa","aaaap","aaa","aaapa","aaap","aaapp","aa","aapaa","aapa","aapap","aap","aappa","aapp","aappp","a","apaaa","apaa","apaap","apa","apapa","apap","apapp","ap","appaa","appa","appap","app","apppa","appp","apppp","paaaa","paaa","paaap","paa","paapa","paap","paapp","pa","papaa","papa","papap","pap","pappa","papp","pappp","p","ppaaa","ppaa","ppaap","ppa","ppapa","ppap","ppapp","pp","pppaa","pppa","pppap","ppp","ppppa","pppp","ppppp");
+var	nodes_1 = newArray("11111","1111","11112","111","11121","1112","11122","11","11211","1121","11212","112","11221","1122","11222","1","12111","1211","12112","121","12121","1212","12122","12","12211","1221","12212","122","12221","1222","12222","21111","2111","21112","211","21121","2112","21122","21","21211","2121","21212","212","21221","2122","21222","2","22111","2211","22112","221","22121","2212","22122","22","22211","2221","22212","222","22221","2222","22222");
+
+//the distance between the nodes at each level is therefore also fixed
+var level_index = newArray(1,2,3,4,5,6,7,8);
+var level_distance = newArray(310,160,80,40,20,10,5,2.5);
+
 macro "Read Simi Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1cD1eD1fD20D24D27D2aD2eD2fD30D34D37D3aD3eD3fD40D44D45D46D47D48D49D4aD4bD4cD4eD4fD50D54D57D5aD5eD5fD60D64D67D6aD6eD6fD70D74D75D76D77D78D79D7aD7bD7cD7eD7fD80D84D87D8aD8eD8fD90D94D97D9aD9eD9fDa0Da4Da5Da6Da7Da8Da9DaaDabDacDaeDafDb0Db4Db7DbaDbeDbfDc0Dc4Dc7DcaDceDcfDd0Dd4Dd5Dd6Dd7Dd8Dd9DdaDdbDdcDdeDdfDe0DeeDefDf0Df1Df2Df3Df4Df5Df6Df7Df8Df9DfaDfbDfcDfdDfeDffC9c9D5bD6bD85D86D95D96C7adD07D61C8adD02C68bD3dCf66D2bD3bC6beD28D29D38D39D55D56D65D66CbcdD01De1C58bDe6CdddD25D26D35D36D58D59D68D69D8bD9bDb5Db6DbbDc5Dc6DcbC7adD03D04D05D06D13D21D23D31D33D41D43D51D53D63D73D83D93Da3Db3Dc3Dd3C9beD12D22D32D42D52D62D72D82D92Da2Db2Dc2Dd2C79cD91Da1Cfd6Db8Db9Dc8Dc9CeeeD8cD9cDbcDccC57aD9dC89cDd1C9bdD11C69cD0aD0bD0cDb1Dc1Cfa7D88D89D98D99CdedD5cD6cC68bD4dDe4De5C79dD08D09D71D81CfccD2cD3cC68cD1dC58bD5dC57bD6dD7dD8dDe7De8De9C8acD0dDedC68cD2dDe3C79cDe2"
 {
 	
@@ -102,87 +113,79 @@ function processFiles(dir) {
 //process the individual files
 function process(pathfile) {
 
-if (endsWith(pathfile, ".sbd")) {
+	if (endsWith(pathfile, ".sbd")) {
 	
-names = split(pathfile, "/");
-nl=names.length;
-name=names[nl-2]+"_"+names[nl-1];
-nam=split(name, ".");
-na=name;
+		names = split(pathfile, "/");
+		nl=names.length;
+		name=names[nl-2]+"_"+names[nl-1];
+		nam=split(name, ".");
+		na=name;
 
-filestring=File.openAsString(pathfile); 
-rows=split(filestring, "\n"); 
+		filestring=File.openAsString(pathfile); 
+		rows=split(filestring, "\n"); 
 
-quad = "??"; 
+		quad = "??"; 
 
 //Define the arrays here
-embryo=newArray();//
-quadrant=newArray();//
-cell_name=newArray(); 
-length=newArray();//the number of x,y,z entries for the cell
-start_frame=newArray();
-start_x=newArray();
-start_y=newArray();
-start_z=newArray();
-parent=newArray();//
-fate=newArray();//
+		embryo=newArray();//
+		quadrant=newArray();//
+		cell_name=newArray(); 
+		length=newArray();//the number of x,y,z entries for the cell
+		start_frame=newArray();
+		start_x=newArray();
+		start_y=newArray();
+		start_z=newArray();
+		parent=newArray();//
+		fate=newArray();//
 
-for(i=6; i<rows.length; i++) { //ignore first 7 lines as these are the header
+		for(i=6; i<rows.length; i++) { //ignore first 7 lines as these are the header
 
-	columns=split(rows[i]," "); 
+			columns=split(rows[i]," "); 
 	
-	if ((columns[0] == "---") && (i < rows.length-1)) {//New Entry Found
-		columns=split(rows[i+1]," ");
-		columns1=split(rows[i+2]," ");
-		columns2=split(rows[i+3]," ");
-		columns3=split(rows[i+5]," ");
-		columns4=split(rows[i+4]," ");	
+			if ((columns[0] == "---") && (i < rows.length-1)) {//New Entry Found
+				columns=split(rows[i+1]," ");
+				columns1=split(rows[i+2]," ");
+				columns2=split(rows[i+3]," ");
+				columns3=split(rows[i+5]," ");
+				columns4=split(rows[i+4]," ");	
 		
-				if (columns3[0] == "---") {	} else { //there is an entry for x, y, z
+				if (columns3[0] == "---") {	
+				} else { //there is an entry for x, y, z
 
-			embryo = Array.concat(embryo, na);
-			quadrant = Array.concat(quadrant, quad);
-		    cell_name = Array.concat(cell_name, columns[4]);//Gets the name of the cell	
+					embryo = Array.concat(embryo, na);
+					quadrant = Array.concat(quadrant, quad);
+		    		cell_name = Array.concat(cell_name, columns[4]);//Gets the name of the cell	
 		    
-		    start_frame = Array.concat(start_frame, columns2[0]);//Gets the starting frame of the cell
-		    length = Array.concat(length, columns4[0]);
+		    		start_frame = Array.concat(start_frame, columns2[0]);//Gets the starting frame of the cell
+		    		length = Array.concat(length, columns4[0]);
 
-		if (columns1.length > 4) {						//Gets the parent cell if there is one defined
-			parent = Array.concat(parent, columns1[4]);
-			} else {
-				parent = Array.concat(parent, "None");
-			}
+						if (columns1.length > 4) {						//Gets the parent cell if there is one defined
+							parent = Array.concat(parent, columns1[4]);
+						} else {
+							parent = Array.concat(parent, "None");
+							}
 			
-			start_x = Array.concat(start_x, columns3[1]);
-			start_y = Array.concat(start_y, columns3[2]);
-			start_z = Array.concat(start_z, columns3[3]);
+					start_x = Array.concat(start_x, columns3[1]);
+					start_y = Array.concat(start_y, columns3[2]);
+					start_z = Array.concat(start_z, columns3[3]);
+				}
+			}
 		}
-	}
-}
 
 //draws the summary table
- requires("1.38m");
-    title1 = "Lineage_Summary_Table";
-    title2 = "["+title1+"]";
-    ptab = title2;
-    if (isOpen(title1)) {
-    }
-    else {
-        if (getVersion>="1.41g")
-            run("Table...", "name="+title2+" width=1000 height=300");
-        else
-            run("New... ", "name="+title2+" type=Table width=250 height=600");
-        print(ptab,"\\Headings:Embryo\tCell\tLevel\tTc (mins)\tSeed?\tFlag");
-    }
+ 		requires("1.38m");
+ 	   	title1 = "Lineage_Summary_Table";
+   	 	title2 = "["+title1+"]";
+    	ptab = title2;
+    	if (isOpen(title1)) {
+    	} else {
+        	if (getVersion>="1.41g") {
+            	run("Table...", "name="+title2+" width=1000 height=300");
+        	} else {
+            	run("New... ", "name="+title2+" type=Table width=250 height=600");
+        		print(ptab,"\\Headings:Embryo\tCell\tLevel\tTc (mins)\tSeed?\tFlag");
+ 			   }
    
-//the x positions of the nodes in the tree are fixed to a corresponding node (let a or 1 = left and p 04 " = right in the names)
-x_index = newArray(10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,550,560,570,580,590,600,610,620);
-nodes_2 = newArray("aaaaa","aaaa","aaaap","aaa","aaapa","aaap","aaapp","aa","aapaa","aapa","aapap","aap","aappa","aapp","aappp","a","apaaa","apaa","apaap","apa","apapa","apap","apapp","ap","appaa","appa","appap","app","apppa","appp","apppp","paaaa","paaa","paaap","paa","paapa","paap","paapp","pa","papaa","papa","papap","pap","pappa","papp","pappp","p","ppaaa","ppaa","ppaap","ppa","ppapa","ppap","ppapp","pp","pppaa","pppa","pppap","ppp","ppppa","pppp","ppppp");
-nodes_1 = newArray("11111","1111","11112","111","11121","1112","11122","11","11211","1121","11212","112","11221","1122","11222","1","12111","1211","12112","121","12121","1212","12122","12","12211","1221","12212","122","12221","1222","12222","21111","2111","21112","211","21121","2112","21122","21","21211","2121","21212","212","21221","2122","21222","2","22111","2211","22112","221","22121","2212","22122","22","22211","2221","22212","222","22221","2222","22222");
-
-//the distance between the nodes at each level is therefore also fixed
-level_index = newArray(1,2,3,4,5,6,7,8);
-level_distance = newArray(310,160,80,40,20,10,5,2.5);
 
 //determine from the corresponding .sbc file the calibration and the left/right delimiter
 
