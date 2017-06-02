@@ -1,77 +1,28 @@
-//Reading Simi files
-
-//Simi records tw0 files .sbd and .sbc
-
-//From the Simi manual:
-
-//Explanation of the header contibuted by Bruno Vellutini
-//https://github.com/nelas/simi.py
-
-//3.1 .sbd and .sbc
-//A SIMI°BioCell project consists of two files. All created data of a project are
-//stored in a text file .sbd. The .sbc file contains information of the
-//corresponding disc and settings of the last lineage session as window size etc. 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//### Data v4.00 ####################################################
-
-//# Header: # # # # # # #
-//SIMI*BIOCELL
-//400
-//---
-//# # # # # # # # # # # #
-
-//SIMI*BIOCELL = magic ID string
-//400          = file version 4.00
-//---          = separator
-
-
-//# Cell: # # # # # # # #
-//<free 3D cells count>
-//<start frame> <end frame> <x> <y> <level> <comment>     <= *count
-//---
-//<start cells count> <start time>
-//<start generation>                                      <= *count
-//---
-//<cells left count> <"right> <active cell left> <"right> <gen.name1>
-//<gen.time of birth sec.> <g.level> <g.wildtype> <g.color> <g.name2>
-//<birth frm> <mitosis lvl> <wildtype> <size> <shape> <color> <name>
-//<coordinates count> <cell comment>
-//<frame> <x> <y> <level> <size> <shape> <coord.comment>  <= *count
-//---
-//# # # # # # # # # # # #
-
-//<start ...> values are not used yet (for later implementation)
-//<color> is a real hexadecimal RGB value (e.g. 00ff00 for green)
-//<size> and <shape> are internal values of BioCell
-//<coordinates> are real pixels
-
-//###################################################################
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//each cell entry is seperated by "---"
-//read the .txt file a line at a time
+//Simi reader opens and read .sbd files obtains calibration data from the corresponding .sbc file, plots the tree and lists the cells and theri interdivision times
+//See the bottom of this file for some notes on how to read the .sbd header
+//The lineage trees are plotted according to a template as follows currently this only accomodates 8 levels:
 //
-//The lineage trees are plotted according to a template as follows:
-//
-//				AB										P1						Cells at level 0 are seeds
-//				|										|
-//				|										|						Each cell sits at a node
-//				|										|
-//		ABa_____________Abp						P1a_____________P1p				Cells at level 1 are denoted as seed + left(1 or a - anterior) or right (2 or p - posterior)
-//		|				|						|				|
-//		|				|						|				|
-//		|				|						|				|
+//						AB												P1							Cells at level 0 are seeds
+//						|												|
+//						|												|							Each cell sits at a node
+//						|												|
+//			ABa__________________Abp				  		P1a__________________P1p				Cells at level 1 are denoted as seed + left(1 or a - anterior) or right (2 or p - posterior)
+//			|						|			 			|						|
+//			|						|						|						|
+//			|						|			   			|						|
+//ABaa____________ABap	  ABpa____________ABpp	  P1aa____________P1ap	   P1pa____________P1pp	
+//	|				|		|				|		|				|		|				|		
+//	|				|		|				|		|				|		|				|
+//	|				|		|				|		|				|		|				|
 //
 //
 //
 //
-//
+//Note: cells that are flagged in the summary table are either seeds or the last cell in a lineage and therfore the Tc does not reprsent a complete cell cycle
+//In batch mode all .sbd files in a lineage will be processed and the results appended to the summary table.
 
 //Template variables for plotting the trees
-//the x positions of the nodes in the tree are fixed to a corresponding node (let a or 1 = left and p 04 " = right in the names)
+//the x positions of the nodes in the tree are fixed to a corresponding node (let a or 1 = left and p or 2 = right in the names)
 var x_index = newArray(10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,550,560,570,580,590,600,610,620);
 var	nodes_2 = newArray("aaaaa","aaaa","aaaap","aaa","aaapa","aaap","aaapp","aa","aapaa","aapa","aapap","aap","aappa","aapp","aappp","a","apaaa","apaa","apaap","apa","apapa","apap","apapp","ap","appaa","appa","appap","app","apppa","appp","apppp","paaaa","paaa","paaap","paa","paapa","paap","paapp","pa","papaa","papa","papap","pap","pappa","papp","pappp","p","ppaaa","ppaa","ppaap","ppa","ppapa","ppap","ppapp","pp","pppaa","pppa","pppap","ppp","ppppa","pppp","ppppp");
 var	nodes_1 = newArray("11111","1111","11112","111","11121","1112","11122","11","11211","1121","11212","112","11221","1122","11222","1","12111","1211","12112","121","12121","1212","12122","12","12211","1221","12212","122","12221","1222","12222","21111","2111","21112","211","21121","2112","21122","21","21211","2121","21212","212","21221","2122","21222","2","22111","2211","22112","221","22121","2212","22122","22","22211","2221","22212","222","22221","2222","22222");
@@ -564,3 +515,63 @@ function occurencesInArray(array, value) {
     }
     return count1;
 }
+
+//Reading Simi files
+
+//Simi records tw0 files .sbd and .sbc
+
+//From the Simi manual:
+
+//Explanation of the header contibuted by Bruno Vellutini
+//https://github.com/nelas/simi.py
+
+//3.1 .sbd and .sbc
+//A SIMI°BioCell project consists of two files. All created data of a project are
+//stored in a text file .sbd. The .sbc file contains information of the
+//corresponding disc and settings of the last lineage session as window size etc. 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//### Data v4.00 ####################################################
+
+//# Header: # # # # # # #
+//SIMI*BIOCELL
+//400
+//---
+//# # # # # # # # # # # #
+
+//SIMI*BIOCELL = magic ID string
+//400          = file version 4.00
+//---          = separator
+
+
+//# Cell: # # # # # # # #
+//<free 3D cells count>
+//<start frame> <end frame> <x> <y> <level> <comment>     <= *count
+//---
+//<start cells count> <start time>
+//<start generation>                                      <= *count
+//---
+//<cells left count> <"right> <active cell left> <"right> <gen.name1>
+//<gen.time of birth sec.> <g.level> <g.wildtype> <g.color> <g.name2>
+//<birth frm> <mitosis lvl> <wildtype> <size> <shape> <color> <name>
+//<coordinates count> <cell comment>
+//<frame> <x> <y> <level> <size> <shape> <coord.comment>  <= *count
+//---
+//# # # # # # # # # # # #
+
+//<start ...> values are not used yet (for later implementation)
+//<color> is a real hexadecimal RGB value (e.g. 00ff00 for green)
+//<size> and <shape> are internal values of BioCell
+//<coordinates> are real pixels
+
+//###################################################################
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//each cell entry is seperated by "---"
+//read the .txt file a line at a time
+//
+//
+//Icons used courtesy of: http://www.famfamfam.com/lab/icons/silk/
+//Last revised by Richard Mort
