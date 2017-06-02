@@ -90,16 +90,13 @@ function processFiles(dir) {
 function process(pathfile) {
 
 	if (endsWith(pathfile, ".sbd")) {
-	
 		names = split(pathfile, "/");
 		nl=names.length;
 		name=names[nl-2]+"_"+names[nl-1];
 		nam=split(name, ".");
 		na=name;
-
 		filestring=File.openAsString(pathfile); 
 		rows=split(filestring, "\n"); 
-
 		quad = "??"; 
 
 //Define the arrays here
@@ -131,7 +128,6 @@ function process(pathfile) {
 					embryo = Array.concat(embryo, na);
 					quadrant = Array.concat(quadrant, quad);
 		    		cell_name = Array.concat(cell_name, columns[4]);//Gets the name of the cell	
-		    
 		    		start_frame = Array.concat(start_frame, columns2[0]);//Gets the starting frame of the cell
 		    		length = Array.concat(length, columns4[0]);
 
@@ -140,7 +136,6 @@ function process(pathfile) {
 						} else {
 							parent = Array.concat(parent, "None");
 							}
-			
 					start_x = Array.concat(start_x, columns3[1]);
 					start_y = Array.concat(start_y, columns3[2]);
 					start_z = Array.concat(start_z, columns3[3]);
@@ -153,26 +148,17 @@ function process(pathfile) {
 		title1 = "Lineage_Summary_Table";
 		title2 = "["+title1+"]";
 		ptab = title2;
-
 		if (isOpen(title1)) {
 		}
 			else {
 				run("Table...", "name="+title2+" width=1000 height=300");
 				print(ptab,"\\Headings:Embryo\tCell\tLevel\tTc (mins)\tSeed?\tFlag");
 			}
-			
-   
 
 //determine from the corresponding .sbc file the calibration and the left/right delimiter
 
-//STARTFRAME=0      frame the anlysis starts
-//SCANCOUNT=258		at least as long as the recording???
-//LEVELCOUNT=13		the number of z frames at each timepoint
-//SCANTIME=6000		time between frames in 1/10 sec 6000 = 10 mins
-
 		root = substring(pathfile, 0, lengthOf(pathfile)-3);
 		pathfile2 = root+"sbc";
-
 		if (File.exists(pathfile2) == "0") {
 			print("Error: Cannot find corresponding .sbc file!");
 		} else {
@@ -187,7 +173,6 @@ function process(pathfile) {
 						result = rows2[i];
 						result2 = split(result, "=");
 						left = result2[1];
-			
      				}
 				}
 			}
@@ -199,7 +184,6 @@ function process(pathfile) {
 					result = rows2[i];
 					result2 = split(result, "=");
 					right = result2[1];
-			
      			}
 			}
 		}
@@ -214,9 +198,7 @@ function process(pathfile) {
      			}
 			}
 		}
-
 		t_mins = (time)/600;
-
 
 //Define whether left and right are numbers or letters
 		if (left == "a") {
@@ -226,9 +208,7 @@ function process(pathfile) {
 					nodes = nodes_1;
 					}
 				}
-
 		node_levels = newArray;
-	
 		for (i=0; i<nodes.length; i++) {
 			nlength = lengthOf(nodes[i]);
 			node_levels = Array.concat(node_levels, nlength);
@@ -236,32 +216,24 @@ function process(pathfile) {
 
 //get the seed names and level from the list of names seeds are EITHER a single character that is NOT the left or right delimiter
 //OR two charcters, the second of which is NOT the left or right delimiter
-
 		seeds = newArray();
-
 		for (i=0; i<cell_name.length; i++) {
-	
 			testseed = cell_name[i];
-	
 				if (lengthOf(testseed) == 1) {
 					seeds = Array.concat(seeds, testseed);
 				} 	else {
-
 		 				name1 = substring(testseed, 1, 2);
-		 		
 						if (lengthOf(testseed)!=2) {
 							} 	else {
-					
 							if((name1 == left) || (name1 == right)){
 							} 	else {
 									seeds = Array.concat(seeds, testseed);
 									} 
-			
 	 							}
 					}
 		}
-
-		if (seeds.length == 0) {print("ERROR: No seeds were found!");} else {
+		if (seeds.length == 0) {print("ERROR: No seeds were found!");
+		} 	else {
 
 //create an array of seed offsets and colours
 		cols = newArray("Red", "Blue", "Green", "Black");
@@ -289,20 +261,14 @@ function process(pathfile) {
 
 //Plot the tree from the x,y values
 		ilength = seeds.length*640;//scale the image to the number of seeds
-
 		newImage(na+"_Lineage_Tree", "RGB white", ilength, 1200, 1);
-
 		run("Line Width...", "line=4");
-
 		setFont("SansSerif" , 8, "antialiased");
-
 		if (isOpen("ROI Manager")) {
 			selectWindow("ROI Manager");
 			run("Close");
 		}
-
 		roiManager("UseNames", "true");
-
 		for (j=0; j<seeds.length; j++) {
 
 //draw seed branch first
@@ -322,8 +288,7 @@ function process(pathfile) {
 			Roi.setName(seed); 
 			roiManager("Add");
 			Overlay.drawString(seed, 315+offset-15, 15);
-			Overlay.show(); 
-		
+			Overlay.show(); 	
 			node_dis = newArray();
 			
 //get the distance of each node from the start by summming the lengths of its subnodes
@@ -336,11 +301,9 @@ function process(pathfile) {
 					for (i=0; i<lengthOf(node); i++) {		
 						node2index = lengthOf(node)-i;
 						node2 = seed+substring(node, 0, node2index);
-
 						for (b=0; b<cell_name.length; b++) {
 							if (node2 == cell_name[b]) {
 								dis = dis + length[b];
-	
 							}			
 						}
 					}
@@ -348,48 +311,40 @@ function process(pathfile) {
  				else {
  					dis = 0;
  				}
-
 				node_dis = Array.concat(node_dis, dis);
 			}
-		
 	    	run("Colors...", "foreground=&col background=black selection=&col");
 	    
-	    
 //loop through the nodes and construct the tree
-	for (g=0; g<nodes.length; g++){
-
-		if (node_dis[g] == 0) {} else {
-			seed = seeds[j];
-			node3 = nodes[g];
-			node4 = seed+node3;
-			nx = x_index[g];		
-			ndis = node_dis[g];
+		for (g=0; g<nodes.length; g++){
+			if (node_dis[g] == 0) {} else {
+				seed = seeds[j];
+				node3 = nodes[g];
+				node4 = seed+node3;
+				nx = x_index[g];		
+				ndis = node_dis[g];
 		
-			//get previous node length in loop
-			teststring = substring(node3, 0, (lengthOf(node3)-1));
+//get previous node length in loop
+				teststring = substring(node3, 0, (lengthOf(node3)-1));
+				node5 = seed+teststring;
+				if (lengthOf(teststring) > 1) {	
 
-			node5 = seed+teststring;
-			if (lengthOf(teststring) > 1) {	
-
-				for (v=0; v<nodes.length; v++) {
-					 if (teststring == nodes[v]) {
-					ndis2 = node_dis[v];
-					} 
-				}
-			}	
+					for (v=0; v<nodes.length; v++) {
+						 if (teststring == nodes[v]) {
+						ndis2 = node_dis[v];
+						} 
+					}
+				}	
 					else { //If node3 is ABa ABp it can't find the length in the node lengths -> go back to lengths
 						for (m=0; m<cell_name.length; m++) {
 							if (node5 == cell_name[m]) {
 
 							ndis2 = length[m];
 							}
-			
 						}
 					}
 
-		
-					
-			//text offset left or right depending on whether this is a right or left cells
+//text offset left or right depending on whether this is a right or left cells
 			texttest = substring(node3, lengthOf(node3)-1, lengthOf(node3));
 			textoffset = 0;
 
@@ -406,7 +361,6 @@ function process(pathfile) {
 		    nodelevel = lengthOf(node3);
 			
 			if (texttest == left) {
-
 				for (z=0; z<level_index.length; z++) {
 					if (nodelevel == level_index[z]) {
 						xdis = level_distance[z];
@@ -417,106 +371,84 @@ function process(pathfile) {
 			makeLine(nx+offset, ndis2*15, nx+offset+xdis, ndis2*15);
 			Roi.setName("X_"+node4); 
 			roiManager("Add");
-
-						
-		
 					}
 			}
 	}
 }
 
 //flag cell if it is a seed
-
-is_seed = newArray();
-//iss = "FALSE";
-
-for (i=0; i<cell_name.length; i++) {
-
-	iss="FALSE";
-	for (j=0; j<seeds.length; j++){
+		is_seed = newArray();
+		for (i=0; i<cell_name.length; i++) {
+			iss="FALSE";
+			for (j=0; j<seeds.length; j++){
 		
-		if (cell_name[i] == seeds[j]) {
-			iss = "TRUE";
-			} else {}
-	
+				if (cell_name[i] == seeds[j]) {
+					iss = "TRUE";
+				} else {}
+			}
+			is_seed = Array.concat(is_seed, iss);
 		}
-		is_seed = Array.concat(is_seed, iss);
-	}
 
 
-//flag cell if the final cell in a lineage
-cell_flag = newArray();
+//flag cell if it the final cell in a lineage and therefore not a complete cell cycle
+		cell_flag = newArray();
 
-for (i=0; i<cell_name.length; i++) {
-	
-	cnam = cell_name[i];
-	flag = "Flag";
-
-	for (j=0; j<cell_name.length; j++) {
-	
-		if ((cnam+left == cell_name[j])||(cnam+right == cell_name[j])) {
-			flag = "";
-			} 
+		for (i=0; i<cell_name.length; i++) {	
+			cnam = cell_name[i];
+			flag = "Flag";
+			for (j=0; j<cell_name.length; j++) {
+				if ((cnam+left == cell_name[j])||(cnam+right == cell_name[j])) {
+					flag = "";
+				} 
+			}
+			if (is_seed[i]=="True") {
+				flag = "Flag";
+			}
+			cell_flag = Array.concat(cell_flag, flag);
 		}
-	if (is_seed[i]=="True") {flag = "Flag";}
-	cell_flag = Array.concat(cell_flag, flag);
-}
-
-run("Colors...", "foreground=&col background=black selection=black");
-roiManager("Show All");
+		run("Colors...", "foreground=&col background=black selection=black");
+		roiManager("Show All");
 
 //get the level of each cell - this is compicated because I can't predict the length of the seed name 
-cell_levels = newArray();
-clev = 0;
-
-for (i=0; i<cell_name.length; i++) {
-	
-	cn = cell_name[i];
-	
-	for (j=0; j<seeds.length; j++) {
-		sn = seeds[j];
+		cell_levels = newArray();
+		clev = 0;
+		for (i=0; i<cell_name.length; i++) {
+			cn = cell_name[i];
+			for (j=0; j<seeds.length; j++) {
+				sn = seeds[j];
 		
-		for (k=0; k<nodes.length; k++) {
-			nn = nodes[k];
+				for (k=0; k<nodes.length; k++) {
+					nn = nodes[k];
 			
-			if (cn == sn+nn) {
-				clev = node_levels[k];
+					if (cn == sn+nn) {
+						clev = node_levels[k];
+					}
+	  			}
+			}
+		cell_levels = Array.concat(cell_levels, clev);	
 		}
-	  }
-	}
-cell_levels = Array.concat(cell_levels, clev);	
-}
 
 
 //get cell cycle times
-cell_tc = newArray();
-for (i=0; i<cell_name.length; i++) {
-	tc = (length[i])*t_mins;
-	cell_tc = Array.concat(cell_tc, tc);
-}
+		cell_tc = newArray();	
+		for (i=0; i<cell_name.length; i++) {
+			tc = (length[i])*t_mins;
+			cell_tc = Array.concat(cell_tc, tc);
+		}
 
 //print results to summary table
-for (i=0; i<cell_name.length; i++) {
+		for (i=0; i<cell_name.length; i++) {
+			print(ptab,embryo[i]+"\t"+cell_name[i]+"\t"+cell_levels[i]+"\t"+cell_tc[i]+"\t"+is_seed[i]+"\t"+cell_flag[i]);
+		}
+				}
 
-print(ptab,embryo[i]+"\t"+cell_name[i]+"\t"+cell_levels[i]+"\t"+cell_tc[i]+"\t"+is_seed[i]+"\t"+cell_flag[i]);
-
+			}
+	}
 }
 
-
-
-
-}
-
-}
-
-}
-}
-
-
-//Returns the number of times the value occurs within the array///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function occurencesInArray(array, value) {
-    count1=0;
+//Returns the number of times the value occurs within the array
     for (a=0; a<lengthOf(array); a++) {
         if (array[a]==value) {
             count1++;
@@ -525,20 +457,14 @@ function occurencesInArray(array, value) {
     return count1;
 }
 
-//Reading Simi files
-
-//Simi records tw0 files .sbd and .sbc
-
+//Reading Simi files - Simi records tw0 files .sbd and .sbc
 //From the Simi manual:
-
 //Explanation of the header contibuted by Bruno Vellutini
 //https://github.com/nelas/simi.py
-
 //3.1 .sbd and .sbc
 //A SIMI°BioCell project consists of two files. All created data of a project are
 //stored in a text file .sbd. The .sbc file contains information of the
 //corresponding disc and settings of the last lineage session as window size etc. 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //### Data v4.00 ####################################################
