@@ -173,18 +173,18 @@ function process(pathfile) {
 		}
 
 //draws the summary table
- 		requires("1.38m");
- 	   	title1 = "Lineage_Summary_Table";
-   	 	title2 = "["+title1+"]";
-    	ptab = title2;
-    	if (isOpen(title1)) {
-    	} else {
-        	if (getVersion>="1.41g") {
-            	run("Table...", "name="+title2+" width=1000 height=300");
-        	} else {
-            	run("New... ", "name="+title2+" type=Table width=250 height=600");
-        		print(ptab,"\\Headings:Embryo\tCell\tLevel\tTc (mins)\tSeed?\tFlag");
- 			   }
+		requires("1.41g");
+		title1 = "Lineage_Summary_Table";
+		title2 = "["+title1+"]";
+		ptab = title2;
+
+		if (isOpen(title1)) {
+		}
+			else {
+				run("Table...", "name="+title2+" width=1000 height=300");
+				print(ptab,"\\Headings:Embryo\tCell\tLevel\tTc (mins)\tSeed?\tFlag");
+			}
+			
    
 
 //determine from the corresponding .sbc file the calibration and the left/right delimiter
@@ -194,49 +194,51 @@ function process(pathfile) {
 //LEVELCOUNT=13		the number of z frames at each timepoint
 //SCANTIME=6000		time between frames in 1/10 sec 6000 = 10 mins
 
-root = substring(pathfile, 0, lengthOf(pathfile)-3);
-pathfile2 = root+"sbc";
+		root = substring(pathfile, 0, lengthOf(pathfile)-3);
+		pathfile2 = root+"sbc";
 
-if (File.exists(pathfile2) == "0") {print("Error: Cannot find corresponding .sbc file!");} else {
+		if (File.exists(pathfile2) == "0") {
+			print("Error: Cannot find corresponding .sbc file!");
+		} else {
 
-filestring2=File.openAsString(pathfile2); 
-rows2=split(filestring2, "\n");
+			filestring2=File.openAsString(pathfile2); 
+			rows2=split(filestring2, "\n");
 
 //get left in a loop
-for (i=0; i<rows2.length; i++) {
-	if (lengthOf(rows2[i]) < 5) {} else {
-		//print(substring(rows2[i],0,4));
-		if (substring(rows2[i],0,4) =="LEFT") {
-			result = rows2[i];
-			result2 = split(result, "=");
-			left = result2[1];
+			for (i=0; i<rows2.length; i++) {
+				if (lengthOf(rows2[i]) < 5) {} else {
+//print(substring(rows2[i],0,4));
+					if (substring(rows2[i],0,4) =="LEFT") {
+						result = rows2[i];
+						result2 = split(result, "=");
+						left = result2[1];
 			
-     	}
-	}
-}
+     				}
+				}
+			}
 
 //get right in a loop
-for (i=0; i<rows2.length; i++) {
-	if (lengthOf(rows2[i]) < 5) {} else {
-		if (substring(rows2[i],0,5) =="RIGHT") {
-			result = rows2[i];
-			result2 = split(result, "=");
-			right = result2[1];
+		for (i=0; i<rows2.length; i++) {
+			if (lengthOf(rows2[i]) < 5) {} else {
+				if (substring(rows2[i],0,5) =="RIGHT") {
+					result = rows2[i];
+					result2 = split(result, "=");
+					right = result2[1];
 			
-     	}
-	}
-}
+     			}
+			}
+		}
 
 //get the scan time in a loop
-for (i=0; i<rows2.length; i++) {
-	if (lengthOf(rows2[i]) < 8) {} else {
-		if (substring(rows2[i],0,8) =="SCANTIME") {
-			result = rows2[i];
-			result2 = split(result, "=");
-			time = result2[1];		
-     	}
-	}
-}
+		for (i=0; i<rows2.length; i++) {
+			if (lengthOf(rows2[i]) < 8) {} else {
+				if (substring(rows2[i],0,8) =="SCANTIME") {
+					result = rows2[i];
+					result2 = split(result, "=");
+					time = result2[1];		
+     			}
+			}
+		}
 
 t_mins = (time)/600;
 
@@ -523,6 +525,7 @@ print(ptab,embryo[i]+"\t"+cell_name[i]+"\t"+cell_levels[i]+"\t"+cell_tc[i]+"\t"+
 
 }
 }
+
 
 //Returns the number of times the value occurs within the array///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
