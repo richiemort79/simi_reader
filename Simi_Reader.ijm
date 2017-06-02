@@ -6,11 +6,11 @@
 //						|												|
 //						|												|							Each cell sits at a node
 //						|												|
-//			ABa__________________Abp				  		P1a__________________P1p				Cells at level 1 are denoted as seed + left(1 or a - anterior) or right (2 or p - posterior)
-//			|						|			 			|						|
+//			ABa__________________Abp						P1a__________________P1p				Cells at level 1 are denoted as seed + left(1 or a - anterior) or right (2 or p - posterior)
 //			|						|						|						|
-//			|						|			   			|						|
-//ABaa____________ABap	  ABpa____________ABpp	  P1aa____________P1ap	   P1pa____________P1pp	
+//			|						|						|						|
+//			|						|						|						|
+//ABaa____________ABap		ABpa____________ABpp	P1aa____________P1ap	P1pa____________P1pp	
 //	|				|		|				|		|				|		|				|		
 //	|				|		|				|		|				|		|				|
 //	|				|		|				|		|				|		|				|
@@ -47,11 +47,16 @@ macro "Read Simi Batch Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1c
 	Dialog.create("Batch Mode Settings");
 	Dialog.addCheckbox("Save ROIset?", false);
 	Dialog.addCheckbox("Save Image?", false);
+	Dialog.addCheckbox("Save Summary Table?", false);
 	Dialog.show();
 	roiset = Dialog.getCheckbox();
 	plot = Dialog.getCheckbox();
+	s_table = Dialog.getCheckbox();
 	
-	dir = getDirectory("Choose a Directory ");
+	dir = getDirectory("Choose a Directory that contains your .sbd files ");
+	if ((roiset == true)||(plot == true)||(s_table == true)) {
+		dir2 = getDirectory("Choose a destination Directory for your data");
+	} else {}
 	count = 0;
 	countFiles(dir);
 	n =0;
@@ -376,6 +381,22 @@ function process(pathfile) {
 	}
 }
 
+//save the data to the destination folder if option is chosen
+
+		if (roiset == true) {
+			roiManager("Show All");
+			roiManager("Save", dir2+na+"_Lineage_Tree_RoiSet.zip");
+		} else {}
+
+		if (plot == true) {
+			selectWindow(na+"_Lineage_Tree");
+			saveAs("Tiff", dir2+na+"_Lineage_Tree.tif");
+		} else {}
+
+
+
+	
+
 //flag cell if it is a seed
 		is_seed = newArray();
 		for (i=0; i<cell_name.length; i++) {
@@ -443,12 +464,18 @@ function process(pathfile) {
 				}
 
 			}
+
+		if (s_table == true) {
+			selectWindow("Lineage_Summary_Table");
+			saveAs("Text", dir2+"Lineage_Summary_Table.xls");
+		} else {}
 	}
 }
 
 
 function occurencesInArray(array, value) {
 //Returns the number of times the value occurs within the array
+	count1=0;
     for (a=0; a<lengthOf(array); a++) {
         if (array[a]==value) {
             count1++;
@@ -456,6 +483,7 @@ function occurencesInArray(array, value) {
     }
     return count1;
 }
+
 
 //Reading Simi files - Simi records tw0 files .sbd and .sbc
 //From the Simi manual:
