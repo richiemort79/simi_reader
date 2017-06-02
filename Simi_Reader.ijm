@@ -240,133 +240,145 @@ function process(pathfile) {
 			}
 		}
 
-t_mins = (time)/600;
+		t_mins = (time)/600;
 
-if (left == "a") {nodes = nodes_2;} else {if (left == 1) {nodes = nodes_1;}}
 
-node_levels = newArray;
+//Define whether left and right are numbers or letters
+		if (left == "a") {
+			nodes = nodes_2;
+			} 	else {
+					if (left == 1) {
+					nodes = nodes_1;
+					}
+				}
 
-for (i=0; i<nodes.length; i++) {
-	nlength = lengthOf(nodes[i]);
-	node_levels = Array.concat(node_levels, nlength);
-}
+		node_levels = newArray;
+	
+		for (i=0; i<nodes.length; i++) {
+			nlength = lengthOf(nodes[i]);
+			node_levels = Array.concat(node_levels, nlength);
+		}
 
 //get the seed names and level from the list of names seeds are EITHER a single character that is NOT the left or right delimiter
 //OR two charcters, the second of which is NOT the left or right delimiter
 
-seeds = newArray();
+		seeds = newArray();
 
-for (i=0; i<cell_name.length; i++) {
+		for (i=0; i<cell_name.length; i++) {
 	
-	testseed = cell_name[i];
+			testseed = cell_name[i];
 	
-	if (lengthOf(testseed) == 1) {seeds = Array.concat(seeds, testseed);} else {
+				if (lengthOf(testseed) == 1) {
+					seeds = Array.concat(seeds, testseed);
+				} 	else {
 
-		 name1 = substring(testseed, 1, 2);
+		 				name1 = substring(testseed, 1, 2);
 		 		
-		 if (lengthOf(testseed)!=2) {} else {
+						if (lengthOf(testseed)!=2) {
+							} 	else {
 					
-					if((name1 == left) || (name1 == right)){} else {
-						seeds = Array.concat(seeds, testseed);
-					} 
+							if((name1 == left) || (name1 == right)){
+							} 	else {
+									seeds = Array.concat(seeds, testseed);
+									} 
 			
-	 		}
-	}
-}
+	 							}
+					}
+		}
 
-if (seeds.length == 0) {print("ERROR: No seeds were found!");} else {
+		if (seeds.length == 0) {print("ERROR: No seeds were found!");} else {
 
 //create an array of seed offsets and colours
-cols = newArray("Red", "Blue", "Green", "Black");
-seeds_offset = newArray();
-seeds_color = newArray();
-soff = 0;
-scol = "Red";
-seeds_offset = Array.concat(seeds_offset, soff);
-seeds_color = Array.concat(seeds_color, scol);
-cindex=0;
+		cols = newArray("Red", "Blue", "Green", "Black");
+		seeds_offset = newArray();
+		seeds_color = newArray();
+		soff = 0;
+		scol = "Red";
+		seeds_offset = Array.concat(seeds_offset, soff);
+		seeds_color = Array.concat(seeds_color, scol);
+		cindex=0;
 
-for (i=0; i<seeds.length-1; i++) {
-	soff=soff+620;
-	if (cindex < 3) {cindex = cindex+1;} else {cindex = 0;}
-	scol = cols[cindex];
-	seeds_offset = Array.concat(seeds_offset, soff);
-	seeds_color = Array.concat(seeds_color, scol);
-}
+		for (i=0; i<seeds.length-1; i++) {
+			soff=soff+620;
+			if (cindex < 3) {
+				cindex = cindex+1;} 
+					else {
+						cindex = 0
+					}
+			scol = cols[cindex];
+			seeds_offset = Array.concat(seeds_offset, soff);
+			seeds_color = Array.concat(seeds_color, scol);
+		}
 
 //use seed[node] to get the Y values from the simi data in the arrays above
 
 //Plot the tree from the x,y values
-ilength = seeds.length*640;//scale the image to the number of seeds
+		ilength = seeds.length*640;//scale the image to the number of seeds
 
-newImage(na+"_Lineage_Tree", "RGB white", ilength, 1200, 1);
+		newImage(na+"_Lineage_Tree", "RGB white", ilength, 1200, 1);
 
-run("Line Width...", "line=4");
+		run("Line Width...", "line=4");
 
-setFont("SansSerif" , 8, "antialiased");
+		setFont("SansSerif" , 8, "antialiased");
 
-if (isOpen("ROI Manager")) {
-	selectWindow("ROI Manager");
-	run("Close");
-}
+		if (isOpen("ROI Manager")) {
+			selectWindow("ROI Manager");
+			run("Close");
+		}
 
-roiManager("UseNames", "true");
+		roiManager("UseNames", "true");
 
-for (j=0; j<seeds.length; j++) {
+		for (j=0; j<seeds.length; j++) {
 
 //draw seed branch first
 		
-		col = seeds_color[j];
-		run("Colors...", "foreground=&col background=black selection=&col");
-		seed = seeds[j];
-		offset = seeds_offset[j];
+			col = seeds_color[j];
+			run("Colors...", "foreground=&col background=black selection=&col");
+			seed = seeds[j];
+			offset = seeds_offset[j];
 
-		//seedlength is the length of the seed cell
-		for (f=0; f<cell_name.length; f++) {
-		
-			if (seed == cell_name[f]) {
-
-				seedlength = length[f];}
-
-		}
-		drawLine(315+offset, 0, 315+offset, seedlength*15);
-		makeLine(315+offset, 0, 315+offset, seedlength*15);
-		Roi.setName(seed); 
-		roiManager("Add");
-		Overlay.drawString(seed, 315+offset-15, 15);
-		Overlay.show(); 
-		
-		node_dis = newArray();
-			
-		//get the distance of each node from the start by summming the lengths of its subnodes
-		for (h=0; h<nodes.length; h++){
-			node = nodes[h];
-			
-			node1 = seed+node;
-
-		    exists = occurencesInArray(cell_name,node1);
-			if (exists == 1) {
-		    
-		    dis = 0;
-			for (i=0; i<lengthOf(node); i++) {		
-				
-				node2index = lengthOf(node)-i;
-				node2 = seed+substring(node, 0, node2index);
-
-				for (b=0; b<cell_name.length; b++) {
-					if (node2 == cell_name[b]) {
-						dis = dis + length[b];
-	
-					}			
+//seedlength is the length of the seed cell
+			for (f=0; f<cell_name.length; f++) {
+				if (seed == cell_name[f]) {
+					seedlength = length[f];
 				}
 			}
-		}
- 				else{dis = 0;}
-
-			node_dis = Array.concat(node_dis, dis);
-		}
+			drawLine(315+offset, 0, 315+offset, seedlength*15);
+			makeLine(315+offset, 0, 315+offset, seedlength*15);
+			Roi.setName(seed); 
+			roiManager("Add");
+			Overlay.drawString(seed, 315+offset-15, 15);
+			Overlay.show(); 
 		
-	    run("Colors...", "foreground=&col background=black selection=&col");
+			node_dis = newArray();
+			
+//get the distance of each node from the start by summming the lengths of its subnodes
+			for (h=0; h<nodes.length; h++){
+				node = nodes[h];
+				node1 = seed+node;
+		    	exists = occurencesInArray(cell_name,node1);
+				if (exists == 1) {
+		    		dis = 0;
+					for (i=0; i<lengthOf(node); i++) {		
+						node2index = lengthOf(node)-i;
+						node2 = seed+substring(node, 0, node2index);
+
+						for (b=0; b<cell_name.length; b++) {
+							if (node2 == cell_name[b]) {
+								dis = dis + length[b];
+	
+							}			
+						}
+					}
+				}
+ 				else {
+ 					dis = 0;
+ 				}
+
+				node_dis = Array.concat(node_dis, dis);
+			}
+		
+	    	run("Colors...", "foreground=&col background=black selection=&col");
 	    
 	    
 //loop through the nodes and construct the tree
