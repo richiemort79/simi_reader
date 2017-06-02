@@ -30,6 +30,8 @@ var	nodes_1 = newArray("11111","1111","11112","111","11121","1112","11122","11",
 //the distance between the nodes at each level is therefore also fixed
 var level_index = newArray(1,2,3,4,5,6,7,8);
 var level_distance = newArray(310,160,80,40,20,10,5,2.5);
+var plot = false;
+var roiset = false;
 
 macro "Read Simi Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1cD1eD1fD20D24D27D2aD2eD2fD30D34D37D3aD3eD3fD40D44D45D46D47D48D49D4aD4bD4cD4eD4fD50D54D57D5aD5eD5fD60D64D67D6aD6eD6fD70D74D75D76D77D78D79D7aD7bD7cD7eD7fD80D84D87D8aD8eD8fD90D94D97D9aD9eD9fDa0Da4Da5Da6Da7Da8Da9DaaDabDacDaeDafDb0Db4Db7DbaDbeDbfDc0Dc4Dc7DcaDceDcfDd0Dd4Dd5Dd6Dd7Dd8Dd9DdaDdbDdcDdeDdfDe0DeeDefDf0Df1Df2Df3Df4Df5Df6Df7Df8Df9DfaDfbDfcDfdDfeDffC9c9D5bD6bD85D86D95D96C7adD07D61C8adD02C68bD3dCf66D2bD3bC6beD28D29D38D39D55D56D65D66CbcdD01De1C58bDe6CdddD25D26D35D36D58D59D68D69D8bD9bDb5Db6DbbDc5Dc6DcbC7adD03D04D05D06D13D21D23D31D33D41D43D51D53D63D73D83D93Da3Db3Dc3Dd3C9beD12D22D32D42D52D62D72D82D92Da2Db2Dc2Dd2C79cD91Da1Cfd6Db8Db9Dc8Dc9CeeeD8cD9cDbcDccC57aD9dC89cDd1C9bdD11C69cD0aD0bD0cDb1Dc1Cfa7D88D89D98D99CdedD5cD6cC68bD4dDe4De5C79dD08D09D71D81CfccD2cD3cC68cD1dC58bD5dC57bD6dD7dD8dDe7De8De9C8acD0dDedC68cD2dDe3C79cDe2"
 {
@@ -42,23 +44,12 @@ macro "Read Simi Batch Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1c
 {
 	//prompt - what to do with files and roi sets
 	
-	//Dialog.create("Analysis Settings");
-	//Dialog.addMessage("Please review the following");
-	//Dialog.addCheckbox("Mask Saturated?", false);
-	//Dialog.addCheckbox("Subtract Background?", true);
-	//Dialog.addCheckbox("Gaussian?", false);
-	//Dialog.addCheckbox("Normalise?", true);
-	//Dialog.addCheckbox("Calibration Bar?", false);
-	//Dialog.addCheckbox("Analyze ROIset?", false);
-	//Dialog.addCheckbox("Ratiometric Plot?", true);
-	//Dialog.show();
-	//mask = Dialog.getCheckbox();
-	//subt = Dialog.getCheckbox();
-	//gaus = Dialog.getCheckbox();
-	//norm = Dialog.getCheckbox();
-	//calb = Dialog.getCheckbox();
-	//roiset = Dialog.getCheckbox();
-	//ratio = Dialog.getCheckbox();
+	Dialog.create("Batch Mode Settings");
+	Dialog.addCheckbox("Save ROIset?", false);
+	Dialog.addCheckbox("Save Image?", false);
+	Dialog.show();
+	roiset = Dialog.getCheckbox();
+	plot = Dialog.getCheckbox();
 	
 	dir = getDirectory("Choose a Directory ");
 	count = 0;
@@ -315,7 +306,6 @@ function process(pathfile) {
 		for (j=0; j<seeds.length; j++) {
 
 //draw seed branch first
-		
 			col = seeds_color[j];
 			run("Colors...", "foreground=&col background=black selection=&col");
 			seed = seeds[j];
