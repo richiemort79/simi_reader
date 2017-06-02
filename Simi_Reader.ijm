@@ -53,9 +53,24 @@
 
 //each cell entry is seperated by "---"
 //read the .txt file a line at a time
+//
+//The lineage trees are plotted according to a template as follows:
+//
+//				AB										P1						Cells at level 0 are seeds
+//				|										|
+//				|										|						Each cell sits at a node
+//				|										|
+//		ABa_____________Abp						P1a_____________P1p				Cells at level 1 are denoted as seed + left(1 or a - anterior) or right (2 or p - posterior)
+//		|				|						|				|
+//		|				|						|				|
+//		|				|						|				|
+//
+//
+//
+//
+//
 
 //Template variables for plotting the trees
-
 //the x positions of the nodes in the tree are fixed to a corresponding node (let a or 1 = left and p 04 " = right in the names)
 var x_index = newArray(10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240,250,260,270,280,290,300,310,320,330,340,350,360,370,380,390,400,410,420,430,440,450,460,470,480,490,500,510,520,530,540,550,560,570,580,590,600,610,620);
 var	nodes_2 = newArray("aaaaa","aaaa","aaaap","aaa","aaapa","aaap","aaapp","aa","aapaa","aapa","aapap","aap","aappa","aapp","aappp","a","apaaa","apaa","apaap","apa","apapa","apap","apapp","ap","appaa","appa","appap","app","apppa","appp","apppp","paaaa","paaa","paaap","paa","paapa","paap","paapp","pa","papaa","papa","papap","pap","pappa","papp","pappp","p","ppaaa","ppaa","ppaap","ppa","ppapa","ppap","ppapp","pp","pppaa","pppa","pppap","ppp","ppppa","pppp","ppppp");
@@ -207,7 +222,6 @@ function process(pathfile) {
 //get left in a loop
 			for (i=0; i<rows2.length; i++) {
 				if (lengthOf(rows2[i]) < 5) {} else {
-//print(substring(rows2[i],0,4));
 					if (substring(rows2[i],0,4) =="LEFT") {
 						result = rows2[i];
 						result2 = split(result, "=");
