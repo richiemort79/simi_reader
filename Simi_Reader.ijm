@@ -169,51 +169,6 @@ function process(pathfile) {
 //determine from the corresponding .sbc file the calibration and the left/right delimiter
 sbc_calibration(pathfile);
 
-//		root = substring(pathfile, 0, lengthOf(pathfile)-3);
-	//	pathfile2 = root+"sbc";
-		//if (File.exists(pathfile2) == "0") {
-//			print("Error: Cannot find corresponding .sbc file!");
-//		} else {
-
-	//		filestring2=File.openAsString(pathfile2); 
-		//	rows2=split(filestring2, "\n");
-
-//get left delimetr in a loop
-	//		for (i=0; i<rows2.length; i++) {
-	//			if (lengthOf(rows2[i]) < 5) {} else {
-//					if (substring(rows2[i],0,4) =="LEFT") {
-	//					result = rows2[i];
-		//				result2 = split(result, "=");
-			//			left = result2[1];
-     			///	}
-		//		}
-		//	}
-
-//get right delimeter in a loop
-//		for (i=0; i<rows2.length; i++) {
-	//		if (lengthOf(rows2[i]) < 5) {} else {
-		//		if (substring(rows2[i],0,5) =="RIGHT") {
-			//		result = rows2[i];
-				//	result2 = split(result, "=");
-					//right = result2[1];
-     //			}
-	//		}
-	//	}
-
-//get the scan time in a loop
-	//	for (i=0; i<rows2.length; i++) {
-	//		if (lengthOf(rows2[i]) < 8) {} else {
-	//			if (substring(rows2[i],0,8) =="SCANTIME") {
-	//				result = rows2[i];
-	//				result2 = split(result, "=");
-	//				time = result2[1];		
-    // 			}
-	//		}
-	//	}
-	//	t_mins = (time)/600;
-
-
-
 //Define whether left and right are numbers or letters
 		if (left_delim == "a") {
 			nodes = nodes_2;
@@ -403,9 +358,6 @@ sbc_calibration(pathfile);
 		} else {}
 
 
-
-	
-
 //flag cell if it is a seed
 		is_seed = newArray();
 		for (i=0; i<cell_name.length; i++) {
@@ -418,7 +370,6 @@ sbc_calibration(pathfile);
 			}
 			is_seed = Array.concat(is_seed, iss);
 		}
-
 
 //flag cell if it the final cell in a lineage and therefore not a complete cell cycle
 		cell_flag = newArray();
@@ -457,7 +408,6 @@ sbc_calibration(pathfile);
 			}
 		cell_levels = Array.concat(cell_levels, clev);	
 		}
-
 
 //get cell cycle times
 		cell_tc = newArray();	
