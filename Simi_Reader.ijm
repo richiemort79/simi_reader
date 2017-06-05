@@ -33,6 +33,12 @@ var level_distance = newArray(310,160,80,40,20,10,5,2.5);
 var plot = false;
 var roiset = false;
 
+//other global variables
+var left_delim = 0;
+var right_delim = 0;
+var time_step = 0;
+var t_mins = 0;
+
 macro "Read Simi Action Tool - CfffD00D0eD0fD10D14D15D16D17D18D19D1aD1bD1cD1eD1fD20D24D27D2aD2eD2fD30D34D37D3aD3eD3fD40D44D45D46D47D48D49D4aD4bD4cD4eD4fD50D54D57D5aD5eD5fD60D64D67D6aD6eD6fD70D74D75D76D77D78D79D7aD7bD7cD7eD7fD80D84D87D8aD8eD8fD90D94D97D9aD9eD9fDa0Da4Da5Da6Da7Da8Da9DaaDabDacDaeDafDb0Db4Db7DbaDbeDbfDc0Dc4Dc7DcaDceDcfDd0Dd4Dd5Dd6Dd7Dd8Dd9DdaDdbDdcDdeDdfDe0DeeDefDf0Df1Df2Df3Df4Df5Df6Df7Df8Df9DfaDfbDfcDfdDfeDffC9c9D5bD6bD85D86D95D96C7adD07D61C8adD02C68bD3dCf66D2bD3bC6beD28D29D38D39D55D56D65D66CbcdD01De1C58bDe6CdddD25D26D35D36D58D59D68D69D8bD9bDb5Db6DbbDc5Dc6DcbC7adD03D04D05D06D13D21D23D31D33D41D43D51D53D63D73D83D93Da3Db3Dc3Dd3C9beD12D22D32D42D52D62D72D82D92Da2Db2Dc2Dd2C79cD91Da1Cfd6Db8Db9Dc8Dc9CeeeD8cD9cDbcDccC57aD9dC89cDd1C9bdD11C69cD0aD0bD0cDb1Dc1Cfa7D88D89D98D99CdedD5cD6cC68bD4dDe4De5C79dD08D09D71D81CfccD2cD3cC68cD1dC58bD5dC57bD6dD7dD8dDe7De8De9C8acD0dDedC68cD2dDe3C79cDe2"
 {
 	
@@ -161,55 +167,58 @@ function process(pathfile) {
 			}
 
 //determine from the corresponding .sbc file the calibration and the left/right delimiter
+sbc_calibration(pathfile);
 
-		root = substring(pathfile, 0, lengthOf(pathfile)-3);
-		pathfile2 = root+"sbc";
-		if (File.exists(pathfile2) == "0") {
-			print("Error: Cannot find corresponding .sbc file!");
-		} else {
+//		root = substring(pathfile, 0, lengthOf(pathfile)-3);
+	//	pathfile2 = root+"sbc";
+		//if (File.exists(pathfile2) == "0") {
+//			print("Error: Cannot find corresponding .sbc file!");
+//		} else {
 
-			filestring2=File.openAsString(pathfile2); 
-			rows2=split(filestring2, "\n");
+	//		filestring2=File.openAsString(pathfile2); 
+		//	rows2=split(filestring2, "\n");
 
-//get left in a loop
-			for (i=0; i<rows2.length; i++) {
-				if (lengthOf(rows2[i]) < 5) {} else {
-					if (substring(rows2[i],0,4) =="LEFT") {
-						result = rows2[i];
-						result2 = split(result, "=");
-						left = result2[1];
-     				}
-				}
-			}
+//get left delimetr in a loop
+	//		for (i=0; i<rows2.length; i++) {
+	//			if (lengthOf(rows2[i]) < 5) {} else {
+//					if (substring(rows2[i],0,4) =="LEFT") {
+	//					result = rows2[i];
+		//				result2 = split(result, "=");
+			//			left = result2[1];
+     			///	}
+		//		}
+		//	}
 
-//get right in a loop
-		for (i=0; i<rows2.length; i++) {
-			if (lengthOf(rows2[i]) < 5) {} else {
-				if (substring(rows2[i],0,5) =="RIGHT") {
-					result = rows2[i];
-					result2 = split(result, "=");
-					right = result2[1];
-     			}
-			}
-		}
+//get right delimeter in a loop
+//		for (i=0; i<rows2.length; i++) {
+	//		if (lengthOf(rows2[i]) < 5) {} else {
+		//		if (substring(rows2[i],0,5) =="RIGHT") {
+			//		result = rows2[i];
+				//	result2 = split(result, "=");
+					//right = result2[1];
+     //			}
+	//		}
+	//	}
 
 //get the scan time in a loop
-		for (i=0; i<rows2.length; i++) {
-			if (lengthOf(rows2[i]) < 8) {} else {
-				if (substring(rows2[i],0,8) =="SCANTIME") {
-					result = rows2[i];
-					result2 = split(result, "=");
-					time = result2[1];		
-     			}
-			}
-		}
-		t_mins = (time)/600;
+	//	for (i=0; i<rows2.length; i++) {
+	//		if (lengthOf(rows2[i]) < 8) {} else {
+	//			if (substring(rows2[i],0,8) =="SCANTIME") {
+	//				result = rows2[i];
+	//				result2 = split(result, "=");
+	//				time = result2[1];		
+    // 			}
+	//		}
+	//	}
+	//	t_mins = (time)/600;
+
+
 
 //Define whether left and right are numbers or letters
-		if (left == "a") {
+		if (left_delim == "a") {
 			nodes = nodes_2;
 			} 	else {
-					if (left == 1) {
+					if (left_delim == 1) {
 					nodes = nodes_1;
 					}
 				}
@@ -230,7 +239,7 @@ function process(pathfile) {
 		 				name1 = substring(testseed, 1, 2);
 						if (lengthOf(testseed)!=2) {
 							} 	else {
-							if((name1 == left) || (name1 == right)){
+							if((name1 == left_delim) || (name1 == right_delim)){
 							} 	else {
 									seeds = Array.concat(seeds, testseed);
 									} 
@@ -353,7 +362,7 @@ function process(pathfile) {
 			texttest = substring(node3, lengthOf(node3)-1, lengthOf(node3));
 			textoffset = 0;
 
-			if (texttest == left) {textoffset = "-25";} else {textoffset = "0";}
+			if (texttest == left_delim) {textoffset = "-25";} else {textoffset = "0";}
 
 			drawLine(nx+offset, (ndis)*15, nx+offset, ndis2*15);
 			makeLine(nx+offset, (ndis)*15, nx+offset, ndis2*15);
@@ -365,7 +374,7 @@ function process(pathfile) {
 			xdis=10;
 		    nodelevel = lengthOf(node3);
 			
-			if (texttest == left) {
+			if (texttest == left_delim) {
 				for (z=0; z<level_index.length; z++) {
 					if (nodelevel == level_index[z]) {
 						xdis = level_distance[z];
@@ -418,7 +427,7 @@ function process(pathfile) {
 			cnam = cell_name[i];
 			flag = "Flag";
 			for (j=0; j<cell_name.length; j++) {
-				if ((cnam+left == cell_name[j])||(cnam+right == cell_name[j])) {
+				if ((cnam+left_delim == cell_name[j])||(cnam+right_delim == cell_name[j])) {
 					flag = "";
 				} 
 			}
@@ -472,6 +481,53 @@ function process(pathfile) {
 	}
 }
 
+function sbc_calibration(pathfile){
+//determine from the corresponding .sbc file the calibration and the left/right delimiter
+
+		root = substring(pathfile, 0, lengthOf(pathfile)-3);
+		pathfile2 = root+"sbc";
+		if (File.exists(pathfile2) == "0") {
+			print("Error: Cannot find corresponding .sbc file!");
+		} else {
+
+			filestring2=File.openAsString(pathfile2); 
+			rows2=split(filestring2, "\n");
+
+//get left delimeter in a loop
+			for (i=0; i<rows2.length; i++) {
+				if (lengthOf(rows2[i]) < 5) {} else {
+					if (substring(rows2[i],0,4) =="LEFT") {
+						result = rows2[i];
+						result2 = split(result, "=");
+						left_delim = result2[1];
+     				}
+				}
+			}
+
+//get right delimeter in a loop
+		for (i=0; i<rows2.length; i++) {
+			if (lengthOf(rows2[i]) < 5) {} else {
+				if (substring(rows2[i],0,5) =="RIGHT") {
+					result = rows2[i];
+					result2 = split(result, "=");
+					right_delim = result2[1];
+     			}
+			}
+		}
+
+//get the scan time in a loop
+		for (i=0; i<rows2.length; i++) {
+			if (lengthOf(rows2[i]) < 8) {} else {
+				if (substring(rows2[i],0,8) =="SCANTIME") {
+					result = rows2[i];
+					result2 = split(result, "=");
+					time_step = result2[1];		
+     			}
+			}
+		}
+		t_mins = (time_step)/600;
+	}
+}
 
 function occurencesInArray(array, value) {
 //Returns the number of times the value occurs within the array
