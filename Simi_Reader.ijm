@@ -38,8 +38,20 @@ var left_delim = 0;
 var right_delim = 0;
 var time_step = 0;
 var t_mins = 0;
+var	roiset = false;
+var	plot = false;
+var	s_table = false;
 
 macro "Read Simi Action Tool - CfffD00D01D02D03D04D05D06D07D08D09D0eD0fD10D11D12D13D14D15D16D17D18D19D1eD1fD20D21D22D23D24D25D26D29D2eD2fD30D31D32D33D34D35D36D38D39D3eD3fD40D41D42D43D44D45D46D48D49D4aD4bD4cD4dD4eD4fD50D51D52D53D54D55D56D58D59D5aD5bD5cD5dD5eD5fD60D65D66D68D69D6eD6fD70D75D78D79D7eD7fD80D85D88D89D8eD8fD90D95D96D98D99D9eD9fDa0Da1Da2Da3Da4Da5Da6Da8Da9DaaDabDacDadDaeDafDb0Db1Db2Db3Db4Db5Db6Db8Db9DbaDbbDbcDbdDbeDbfDc0Dc1Dc2Dc3Dc4Dc5Dc6Dc8Dc9DceDcfDd0Dd1Dd2Dd3Dd4Dd5Dd6Dd9DdeDdfDe0De1De2De3De4De5De6De7De8De9DeeDefDf0Df1Df2Df3Df4Df5Df6Df7Df8Df9DfeDffC666Dc7C4a3D9aC47cD94C282DcbC6b6D1aC6b5D1dCbbbD27D28D37D47C282DccDeaDfaCaaaD77C5a5DdcC6aeD64C393D8dD9cC9c8D7bC6b5D0bD0cD2aD3aC9cfD61C888Da7C5a4DecC59dD74C282D9dC7c7D8cC6b5D3bC555Dd8CbbbD57D76D86C5b5D2dD3cD3dD6aC8bfD62D71C393D7dCadaD1cD2bCcceD73D82C777Db7C4a4D6cC58cD84D93C282DdaC7c6D0aCaaaD67C5a5DdbDebC7beD63D81CadaD2cCbceD83C888D97C5b4D6bC69dD92C382DcaC8c7D7cC6b5D0dC666Dd7C393D9bCbdaD1bCcdfD72C7aeD91C5a4D8aC999D87C5b4D7aC8c8D8bC4a3D6d"{
+
+	Dialog.create("Batch Mode Settings");
+	Dialog.addCheckbox("Save ROIset?", false);
+	Dialog.addCheckbox("Save Image?", false);
+	Dialog.addCheckbox("Save Summary Table?", false);
+	Dialog.show();
+	roiset = Dialog.getCheckbox();
+	plot = Dialog.getCheckbox();
+	s_table = Dialog.getCheckbox();
 	
 	pathfile=File.openDialog("Choose the file to Open:");
 	process(pathfile);
