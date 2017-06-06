@@ -30,8 +30,6 @@ var	nodes_1 = newArray("11111","1111","11112","111","11121","1112","11122","11",
 //the distance between the nodes at each level is therefore also fixed
 var level_index = newArray(1,2,3,4,5,6,7,8);
 var level_distance = newArray(310,160,80,40,20,10,5,2.5);
-var plot = false;
-var roiset = false;
 
 //other global variables
 var left_delim = 0;
